@@ -1,0 +1,7 @@
+Flask==3.1.2
+python-dotenv==1.1.1
+requests==2.32.5
+Pillow==11.3.0
+pytesseract==0.3.13
+APScheduler==3.11.0
+gunicorn==23.0.0
