@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}{{ site_name }} · 보호동물{% endblock %}
+{% block header_title %}{{ site_name }}{% endblock %}
+{% block content %}
+<section class="hero">
+  <span class="eyebrow">STORY → ARCHIVE</span>
+  <h1>오늘의 이야기가<br>사라지지 않도록.</h1>
+  <p>센터에서 올린 인스타그램 스토리를 모아 보호동물의 시간으로 차곡차곡 기록합니다.</p>
+  <div class="hero-actions">
+    <a class="secondary action-link" href="{{ url_for('admin') }}">관리 화면</a>
+  </div>
+</section>
+
+<section class="section-head">
+  <div><span class="eyebrow">OUR FRIENDS</span><h2>가족을 기다리는 친구들</h2></div>
+  <span class="count">{{ animals|length }}마리</span>
+</section>
+
+<section class="animal-grid">
+  {% for animal in animals %}
+  <a class="animal-card" href="{{ url_for('animal_detail', animal_id=animal.id) }}">
+    <div class="animal-visual">
+      {% if animal.cover_image %}<img src="{{ url_for('static', filename=animal.cover_image) }}" alt="{{ animal.name }}">
+      {% else %}<span>{{ '🐈' if animal.species == '고양이' else '🐕' }}</span>{% endif %}
+      <span class="status">{{ animal.status }}</span>
+    </div>
+    <div class="animal-copy">
+      <div class="name-row"><h3>{{ animal.name }}</h3><span>→</span></div>
+      <p>{{ animal.species }} · {{ animal.sex }} · {{ animal.age_text }}</p>
+      <p class="desc">{{ animal.description }}</p>
+      <div class="meta"><span>기록 {{ animal.story_count }}개</span>{% if animal.last_update %}<span>최근 {{ animal.last_update|pretty_date }}</span>{% endif %}</div>
+    </div>
+  </a>
+  {% endfor %}
+</section>
+{% endblock %}
