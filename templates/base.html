@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8f3ea">
+  <title>{% block title %}{{ site_name }}{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='common.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="app-header">
+    <div class="app-header__inner">
+      <div class="app-header__side app-header__side--left">
+        {% block header_left %}
+          <span class="header-button header-button--placeholder" aria-hidden="true"></span>
+        {% endblock %}
+      </div>
+
+      <a class="app-header__identity" href="{{ url_for('index') }}" aria-label="{{ site_name }} 홈">
+        <span class="app-header__mark">🐾</span>
+        <span class="app-header__title">{% block header_title %}{{ site_name }}{% endblock %}</span>
+      </a>
+
+      <div class="app-header__side app-header__side--right">
+        <a class="header-button" href="{{ url_for('index') }}" aria-label="홈으로 이동" title="홈">
+          <span aria-hidden="true">⌂</span>
+          <span class="sr-only">홈</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <div class="flash-wrap">
+      {% for message in messages %}<div class="flash">{{ message }}</div>{% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <main class="app-main">{% block content %}{% endblock %}</main>
+
+  <footer class="app-footer" id="contact">
+    <div class="app-footer__inner">
+      <div class="app-footer__copy">
+        <p class="app-footer__title">{{ site_name }}</p>
+        <p class="app-footer__text">인스타그램의 짧은 기록을 오래 남기는 보호센터 아카이브</p>
+      </div>
+      {% if contact_url %}
+        <a class="contact-button" href="{{ contact_url }}">문의하기</a>
+      {% else %}
+        <span class="contact-button contact-button--disabled" title="CONTACT_URL을 설정하면 활성화됩니다.">문의 준비 중</span>
+      {% endif %}
+    </div>
+  </footer>
+</body>
+</html>
