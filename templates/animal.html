@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}{{ animal.name }} · {{ site_name }}{% endblock %}
+{% block header_title %}{{ animal.name }}{% endblock %}
+{% block header_left %}
+  <a class="header-button" href="{{ url_for('index') }}" aria-label="보호동물 목록으로 돌아가기" title="뒤로가기">
+    <span aria-hidden="true">←</span>
+    <span class="sr-only">뒤로가기</span>
+  </a>
+{% endblock %}
+{% block content %}
+<section class="page-heading animal-page-heading">
+  <div>
+    <span class="eyebrow">{{ animal.status }}</span>
+    <h1 class="page-heading__title">{{ animal.name }}</h1>
+  </div>
+  <div class="page-heading__actions">
+    {% if contact_url %}
+      <a class="primary action-link" href="{{ contact_url }}">입양 문의</a>
+    {% else %}
+      <button class="primary" type="button" onclick="alert('센터 문의 링크가 아직 설정되지 않았습니다.')">입양 문의</button>
+    {% endif %}
+  </div>
+</section>
+
+<section class="profile">
+  <div class="profile-card">
+    <div class="profile-emoji">{{ '🐈' if animal.species == '고양이' else '🐕' }}</div>
+    <div>
+      <p class="profile-meta">{{ animal.species }} · {{ animal.sex }} · {{ animal.age_text }}</p>
+      <p>{{ animal.description }}</p>
+    </div>
+  </div>
+</section>
+
+<section class="section-head timeline-head">
+  <div><span class="eyebrow">LIFE LOG</span><h2>{{ animal.name }}의 기록</h2></div>
+  <span class="count">{{ stories|length }}개</span>
+</section>
+
+{% if stories %}
+<section class="story-grid">
+  {% for story in stories %}
+  <article class="story-card">
+    <div class="story-media">
+      {% if story.media_type == 'VIDEO' %}
+        <video controls preload="metadata" src="{{ url_for('static', filename=story.local_path) }}"></video>
+      {% else %}
+        <img loading="lazy" src="{{ url_for('static', filename=story.local_path) }}" alt="{{ animal.name }}의 기록">
+      {% endif %}
+    </div>
+    <div class="story-copy">
+      <time>{{ story.created_at|pretty_date }}</time>
+      {% if story.ocr_text %}<p>{{ story.ocr_text }}</p>{% else %}<p class="muted">스토리에서 읽힌 문구가 없습니다.</p>{% endif %}
+      <small>{{ story.match_reason }}</small>
+    </div>
+  </article>
+  {% endfor %}
+</section>
+{% else %}
+<div class="empty">아직 저장된 이야기가 없습니다. 첫 스토리를 기다리고 있어요.</div>
+{% endif %}
+{% endblock %}
