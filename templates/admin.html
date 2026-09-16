@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}관리 · {{ site_name }}{% endblock %}
+{% block header_title %}관리{% endblock %}
+{% block header_left %}
+  <a class="header-button" href="{{ url_for('index') }}" aria-label="보호동물 목록으로 돌아가기" title="뒤로가기">
+    <span aria-hidden="true">←</span>
+    <span class="sr-only">뒤로가기</span>
+  </a>
+{% endblock %}
+{% block content %}
+<section class="page-heading admin-page-heading">
+  <div>
+    <span class="eyebrow">ADMIN</span>
+    <h1 class="page-heading__title">자동 기록 관리</h1>
+  </div>
+  <div class="page-heading__actions">
+    <form method="post" action="{{ url_for('admin_sync') }}">
+      <button class="primary" {% if not instagram_ready %}disabled{% endif %}>인스타 스토리 지금 동기화</button>
+    </form>
+  </div>
+</section>
+
+{% if not instagram_ready %}<p class="notice">현재 데모 모드입니다. Railway 환경변수에 Instagram User ID와 Access Token을 넣으면 실제 동기화 버튼이 활성화됩니다.</p>{% endif %}
+<p class="admin-intro">이름을 확실히 읽은 스토리만 자동으로 연결하고, 애매한 것은 이곳에 남겨둡니다.</p>
+
+<section class="section-head"><div><span class="eyebrow">REVIEW</span><h2>미분류 스토리</h2></div><span class="count">{{ unmatched|length }}개</span></section>
+
+{% if unmatched %}
+<section class="review-grid">
+  {% for story in unmatched %}
+  <article class="review-card">
+    <img src="{{ url_for('static', filename=story.local_path) }}" alt="미분류 스토리">
+    <div class="review-copy">
+      <time>{{ story.created_at|pretty_date }}</time>
+      <p><strong>OCR:</strong> {{ story.ocr_text or '인식된 글자 없음' }}</p>
+      <form method="post" action="{{ url_for('admin_assign', story_id=story.id) }}">
+        <select name="animal_id" required>
+          <option value="">누구의 사진인가요?</option>
+          {% for animal in animals %}<option value="{{ animal.id }}">{{ animal.name }}</option>{% endfor %}
+        </select>
+        <button class="secondary">프로필에 연결</button>
+      </form>
+    </div>
+  </article>
+  {% endfor %}
+</section>
+{% else %}<div class="empty">미분류 스토리가 없습니다.</div>{% endif %}
+{% endblock %}
