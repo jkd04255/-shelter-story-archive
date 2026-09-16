@@ -1,0 +1,6 @@
+.venv/
+__pycache__/
+.env
+shelter.db
+static/media/*
+!static/media/.gitkeep
